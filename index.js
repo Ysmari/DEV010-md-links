@@ -20,27 +20,30 @@ const mdLinks = ruta => {
     }
     // Verifica si la ruta existe.
     if (!pathExists(ruta)) {
-      reject(new Error('Error - Ruta no válida.'))
-      return // Termina la ejecución si la ruta no es válida.
+      return reject(new Error('Error - Ruta no válida.'))
     }
     // Verifica si la ruta pertenece a un archivo Markdown.
     if (!isMarkdown(ruta)) {
-      reject(new Error('Error - No es un archivo Markdown.'))
-      return // Termina la ejecución si no es un archivo Markdown.
+      return reject(new Error('Error - No es un archivo Markdown.'))
     }
     // Extrae los enlaces del archivo Markdown.
-    const links = extractLinks(ruta)
-    // Si no se encontraron enlaces, se rechaza la promesa.
-    if (links.length === 0) {
-      reject(new Error('Error - No hay enlaces encontrados.'))
-      return // Salimos después de rechazar la promesa.
-    }
-    resolve(links) // Resuelve con los enlaces extraídos.
+    extractLinks(ruta)
+      .then(links => {
+      // Si no se encontraron enlaces, se rechaza la promesa.
+        if (links.length === 0) {
+          reject(new Error('Error - No hay enlaces encontrados.'))
+        } else {
+          resolve(links) // Resuelve con los enlaces extraídos.
+        }
+      })
+      .catch(err => {
+        reject(new Error('Error al extraer los enlaces: ' + err.message))
+      })
   })
 }
 
 // Ejemplo de uso de la función mdLinks
-mdLinks('./README.md')
+mdLinks('./example/readmeEjemplo.md')
   .then(links => {
     console.log('Enlaces encontrados:', links)
   })
