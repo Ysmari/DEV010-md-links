@@ -1,13 +1,17 @@
 /* global describe, it, expect */
 /* eslint-disable no-unused-vars */
+/* global jest */
 const path = require('path')
+const axios = require('axios')
 const {
   isAbsolutePath,
   convertToAbsolutePath,
   pathExists,
   isMarkdown,
-  extractLinks
+  extractLinks,
+  validateLink
 } = require('../lib/app')
+jest.mock('axios')
 
 describe('Funciones auxiliares', () => {
   it('isAbsolutePath - Debería identificar correctamente las rutas absolutas', () => {
@@ -63,9 +67,56 @@ describe('Funciones de extracción de enlaces', () => {
         done(new Error('Se esperaba que la función rechazara, pero se resolvió.'))
       })
       .catch(error => {
-        expect(error.message).toBe('Error al leer el archivo o extraer enlaces: El archivo C:\\Users\\Aeronautico\\Desktop\\PROYECTO MD-LINKS\\DEV010-md-links\\example\\archivoSinEnlaces.md no contiene enlaces.')
-
+        expect(error.message).toBe(`El archivo ${noLinkFilePath} no contiene enlaces.`)
         done()
       })
+  })
+})
+describe('Validación de enlaces', () => {
+  const axios = require('axios') // Obtén la versión mockeada de axios
+
+  it('validateLink - Debería resolver con el estado y texto "OK" para un enlace válido', done => {
+    const link = {
+      href: 'https://nodejs.org/es/',
+      text: 'Node.js',
+      ruta: '/ruta/al/archivo.md'
+    }
+    // Configura axios para simular una respuesta exitosa para esta URL
+    axios.get.mockResolvedValueOnce({ status: 200 })
+
+    validateLink(link).then(result => {
+      expect(result).toEqual({ ...link, status: 200, ok: 'OK' })
+      done()
+    })
+  })
+
+  it('validateLink - Debería resolver con el estado "Fail" para un enlace con error de red', done => {
+    const link = {
+      href: 'https://este-enlace-no-existe123456789.com',
+      text: 'Enlace roto',
+      ruta: '/ruta/al/archivo.md'
+    }
+    // Configura axios para simular un error de red
+    axios.get.mockRejectedValueOnce({ response: null })
+
+    validateLink(link).then(result => {
+      expect(result).toEqual({ ...link, status: 0, ok: 'Fail' })
+      done()
+    })
+  })
+
+  it('validateLink - Debería resolver con el estado y texto "Fail" para un enlace no válido con respuesta de servidor', done => {
+    const link = {
+      href: 'https://pagina-con-error-500.com',
+      text: 'Error interno del servidor',
+      ruta: '/ruta/al/archivo.md'
+    }
+    // Configura axios para simular una respuesta de error 500 del servidor
+    axios.get.mockRejectedValueOnce({ response: { status: 500 } })
+
+    validateLink(link).then(result => {
+      expect(result).toEqual({ ...link, status: 500, ok: 'Fail' })
+      done()
+    })
   })
 })
