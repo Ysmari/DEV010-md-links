@@ -489,3 +489,122 @@ Laboratoria/curriculum-parser`.
   md-links en el path (configurado en el `package.json`)
 * [ ] Pasa tests y linters (`npm test`). Tests unitarios cubren un mínimo
   del 70% de coverage tests, es decir statements, functions, lines y branches.
+
+
+
+
+*ESTE ES UN APARTADO DE LOS PASOS QUE REALICE EN MI PROYECTO!!
+
+## Proceso de Desarrollo
+
+### Estructura de Archivos
+
+El proyecto se estructura de la siguiente manera:
+
+- `DEV010-MD-LINKS/`: Carpeta que contiene el código fuente de la librería.
+  - `index.js`: Archivo principal de la librería que exporta la función `mdLinks`.
+  - `app.js`: Archivo donde tengo las microfunciones de la funcion principal.
+- `example/`: Carpeta que contiene 2 archivos de prueba que son: readmeEjemplo.md y archivoSinEnlaces.md
+- `tests/`:  Carpeta Contiene los tests unitarios para asegurar la calidad del código.
+  - `md-links.spec.js`: Archivo donde estan los test del hito 1 y 2.
+- `package.json`: Archivo de configuración del proyecto, incluye dependencias y scripts.
+- `README.md`: Documentación detallada sobre el proyecto, su instalación y uso.
+
+### Desarrollo del Proyecto
+
+#### Hito 1: Función Principal mdLinks
+
+El desarrollo de `mdLinks` se enfocó inicialmente en cumplir con la interfaz requerida y manejar los siguientes casos:
+
+1. Verificar la ruta proporcionada y convertirla a una absoluta si es necesario.
+2. Leer el archivo Markdown de la ruta proporcionada y extraer los enlaces.
+3. Resolver la promesa con un array de objetos, cada uno representando un enlace con su texto y href correspondiente.
+
+Para lograr esto, se crearon y utilizaron funciones auxiliares dentro de `app.js`, lo cual mantuvo el código de `index.js` limpio y enfocado en la lógica de flujo.
+
+#### Hito 2: Validación de Enlaces
+
+Con la extracción de enlaces funcionando, el siguiente paso fue implementar la validación:
+
+1. Se amplió la función `mdLinks` para aceptar un segundo argumento booleano `validate`.
+2. Cuando `validate` es `true`, `mdLinks` utiliza `Promise.all` para validar todos los enlaces extraídos en paralelo.
+3. Cada enlace se pasa a `validateLink`, una función auxiliar de `app.js` que verifica el estado del enlace realizando una petición HTTP y devuelve una promesa con los resultados de la validación.
+
+Esta funcionalidad permite a los usuarios de la librería no solo extraer enlaces sino también verificar si están rotos o siguen siendo válidos.
+
+#### Testing y Calidad de Código
+
+Para garantizar que la librería funciona como se espera, se implementaron pruebas unitarias para cada función auxiliar y para la función principal `mdLinks`. Estas pruebas verifican tanto el comportamiento esperado como el manejo de errores.
+
+El uso de ESLint ayudó a mantener el código limpio y siguiendo un estilo consistente, lo cual es crucial para la mantenibilidad y legibilidad del código.
+
+### Aprendizajes Clave
+
+A través de la realización de este proyecto, he reforzado mis conocimientos en varios aspectos importantes del desarrollo con Node.js:
+
+- La creación y uso de módulos CommonJS.
+- La lectura de archivos y análisis de contenido en Node.js.
+- El uso de promesas para manejar la asincronía de manera eficiente.
+- La implementación de pruebas unitarias con Jest para asegurar la calidad del software.
+- El desarrollo y publicación de una librería en Node.js que es útil, reutilizable y fácil de instalar y usar por otros desarrolladores.
+
+Este proyecto ha sido una oportunidad excelente para aplicar las buenas prácticas de desarrollo de software y diseño de API que he aprendido, y estoy emocionado/a de ver cómo esta librería puede ser utilizada y mejorada en el futuro.
+
+- Este documento y el proyecto en su estado actual reflejan el cumplimiento de los requerimientos hasta el Hito 2."
+
+## Uso
+
+Para ejecutar la herramienta `mdLinks` y analizar los enlaces dentro de tus archivos Markdown, sigue los siguientes pasos:
+
+1. Abre tu terminal o línea de comandos.
+2. Navega hasta el directorio donde se encuentra el archivo `index.js` de la librería `mdLinks`.
+3. Ejecuta el script proporcionando la ruta al archivo o directorio que deseas analizar. Por ejemplo:
+
+```bash
+node index.js
+
+Al ejecutar el comando, obtendrás una salida en la consola con los enlaces encontrados. Aquí hay un ejemplo de cómo se vería la salida para los enlaces encontrados y los enlaces validados:
+
+Enlaces encontrados:
+
+[
+  {
+    "text": "Node.js",
+    "href": "https://nodejs.org/es/",
+    "ruta": "C:\\ruta\\al\\archivo.md"
+  },
+  {
+    "text": "motor de JavaScript V8 de Chrome",
+    "href": "https://developers.google.com/v8/",
+    "ruta": "C:\\ruta\\al\\archivo.md"
+  }
+]
+
+Enlaces validados:
+
+[
+  {
+    "text": "Node.js",
+    "href": "https://nodejs.org/es/",
+    "ruta": "C:\\ruta\\al\\archivo.md",
+    "status": 200,
+    "ok": "OK"
+  },
+  {
+    "text": "Enlace roto",
+    "href": "https://enlace-que-no-existe.com",
+    "ruta": "C:\\ruta\\al\\archivo.md",
+    "status": 404,
+    "ok": "Fail"
+  }
+]
+
+## Agradecimientos
+
+Gracias por visitar y usar `mdLinks`. Espero que esta herramienta te sea de gran ayuda en la gestión y validación de tus enlaces Markdown.
+
+Si tienes sugerencias de mejora, no dudes en abrir un issue o enviar un pull request. Cualquier contribución es bienvenida y juntos podemos hacer de `mdLinks` una herramienta aún mejor para todos.
+
+¡Feliz codificación!
+
+
